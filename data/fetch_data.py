@@ -46,3 +46,14 @@ def get_stock_symbols():
     and test_issue = false
     and financial_status <> 'Deficient'  ;
     """
+  try:
+    with get_connection() as conn:
+      with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute(query)
+        return cur.fetchall()
+  except Exception as e:
+    print(f"Query Execution error: {e}")
+    return None
+  finally:
+    if conn:
+      conn.close()

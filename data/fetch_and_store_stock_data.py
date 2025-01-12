@@ -23,8 +23,8 @@ def fetch_yesterday_stock_data(ticker):
     if not data.empty:
         yesterday_data = data.iloc[0]
         return {
-            "ticker": ticker,
-            "date": start_date,
+            "symbol": ticker,
+            "trading_date": start_date,
             "open": yesterday_data["Open"],
             "high": yesterday_data["High"],
             "low": yesterday_data["Low"],
