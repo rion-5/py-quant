@@ -1,0 +1,102 @@
+# Python 환경 및 캐시
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 가상환경
+venv/
+env/
+.env/
+.venv/
+conda_env/
+.conda/
+
+# Jupyter Notebook 관련
+.ipynb_checkpoints/
+*.ipynb
+
+# 환경 변수 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE 관련 파일
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# 운영체제 관련 파일
+.DS_Store
+Thumbs.db
+.Spotlight-V100
+.Trashes
+
+# 로그 파일
+*.log
+logs/
+log/
+
+# 빌드 및 배포 관련
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 데이터 파일 (민감한 데이터 제외)
+*.csv
+*.xlsx
+*.xls
+*.db
+*.sqlite3
+
+# 테스트 및 임시 파일
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.cache
+.hypothesis/
+*.mo
+*.pot
+
+# 기타 개발 관련
+*.pid
+*.swp
+*.swo
+*~
+
+# 보안 관련 (추가 주의)
+secrets.json
+*.pem
+*.key
+
+# 대용량 파일
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 프로젝트별 특정 제외 파일
+config/sensitive_data.py

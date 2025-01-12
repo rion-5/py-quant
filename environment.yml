@@ -1,0 +1,14 @@
+name: py-quant
+dependencies:
+  - python=3.9
+  - pandas
+  - numpy
+  - sqlalchemy
+  - psycopg2
+  - yfinance
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - pip:
+      - yahooquery
+            
