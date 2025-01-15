@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 from data.database import get_connection
-import data.fetch_data as fetch
+import data.data_fetcher as fetch
 
 def fetch_yesterday_stock_data(ticker):
     """
@@ -25,7 +25,7 @@ def fetch_yesterday_stock_data(ticker):
     if not data.empty:
         #data = data.iloc[0]
         yesterday_data = data.iloc[0]
-        return {``
+        return {
             "ticker": ticker,
             "trade_date": yesterday_data["Open"].name.strftime('%Y-%m-%d'),
             "open": float(yesterday_data["Open"].values[0]),

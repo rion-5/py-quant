@@ -1,4 +1,4 @@
-from data.fetch_data import get_stock_data, get_recent_trading_days
+from data.data_fetcher import get_stock_data, get_recent_trading_days
 
 def main():
   aapl = get_stock_data('AAPL','2025-01-01','2025-01-08')

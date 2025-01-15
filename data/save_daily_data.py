@@ -1,6 +1,6 @@
 import locale
-import data.fetch_data as fetch
-import data.data_loading as dl
+import data.data_fetcher as fetch
+import data.holiday_data_fetcher as dl
 from datetime import datetime
 
 # 주말 및 공휴일 확인 함수
