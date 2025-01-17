@@ -33,14 +33,14 @@ def main():
   # [(start_date, end_date)] = fetch.get_recent_trading_days()
   # start_date = start_date.strftime("%Y-%m-%d")
   # end_date = end_date.strftime("%Y-%m-%d")
-
-  yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+  today = date.today()
+  yesterday = (today - timedelta(days=1)).strftime('%Y-%m-%d')
 
   if (is_trading_day(yesterday)):
     symbols = fetch.fetch_symbols_from_db()
     tickers = tuple(row['symbol'] for row in symbols)
     for symbol in tickers:
-      stock_data = fetch.fetch_stock_data_from_yfinance(symbol, yesterday, yesterday)
+      stock_data = fetch.fetch_stock_data_from_yfinance(symbol, yesterday, today)
       save.save_stock_data_in_db(stock_data)
 
 if __name__ == '__main__':
