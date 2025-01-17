@@ -3,6 +3,7 @@ import data.data_saver as save
 from data.trading_calendar import is_trading_day
 from datetime import datetime, timedelta, date
 
+
 # # 주말 및 공휴일 확인 함수
 # def is_trading_day(date):
 #     # 날짜를 datetime 객체로 변환 (필요시)
@@ -33,15 +34,27 @@ def main():
   # [(start_date, end_date)] = fetch.get_recent_trading_days()
   # start_date = start_date.strftime("%Y-%m-%d")
   # end_date = end_date.strftime("%Y-%m-%d")
+  
   today = date.today()
   yesterday = (today - timedelta(days=1)).strftime('%Y-%m-%d')
 
   if (is_trading_day(yesterday)):
     symbols = fetch.fetch_symbols_from_db()
     tickers = tuple(row['symbol'] for row in symbols)
-    for symbol in tickers:
+
+
+    # 시작 시간 기록
+    start_time = datetime.datetime.now()
+    print(start_time.strftime("%Y-%m-%d %H:%M:%S"))  # 시작 시간 출력
+
+    print(len(tickers))  # 전체 데이터 개수 출력
+
+
+    # for symbol in tickers:
+    for index, symbol in enumerate(tickers, start=1):  # enumerate로 번호와 데이터를 가져옴
       stock_data = fetch.fetch_stock_data_from_yfinance(symbol, yesterday, today)
       save.save_stock_data_in_db(stock_data)
+      print(f"{index} {record['symbol']}")  # 현재 번호와 ticker 출력
 
 if __name__ == '__main__':
   main()
