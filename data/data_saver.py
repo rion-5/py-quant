@@ -40,8 +40,5 @@ def save_stock_data_in_db(stock_data):
         print(f"Error saving stock data: {e}")
         raise  # Re-raise the exception after logging
     finally:
-      # 종료 시간 기록
-      end_time = datetime.datetime.now()
-      print(end_time.strftime("%Y-%m-%d %H:%M:%S"))  # 종료 시간 출력
       if conn:
         conn.close()  # Ensure connection is closed

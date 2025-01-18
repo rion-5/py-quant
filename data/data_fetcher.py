@@ -1,6 +1,7 @@
 import yfinance as yf
 from psycopg2.extras import RealDictCursor
 from data.database import get_connection
+import pandas as pd
 
 def fetch_stock_data_from_db(symbol, start_date, end_date):
   query = """
@@ -71,21 +72,17 @@ def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
 
     Returns:
         list[dict]: A list of dictionaries with trading data for each day.
-    """
-    stock = yf.Ticker(ticker)
-    data = stock.history(start=start_date, end=end_date)
-
+    """ 
+    try:
+      data = yf.Ticker(ticker).history(start=start_date, end=end_date, period=None)
+    except Exception as e:
+      data = pd.DataFrame()
+      print(f"Unexpected error for {ticker}: {e}")
+      
     if not data.empty:
         results = []
         for date, row in data.iterrows():
             results.append({
-                # "ticker": ticker,
-                # "date": date.strftime('%Y-%m-%d'),
-                # "open": row["Open"],
-                # "high": row["High"],
-                # "low": row["Low"],
-                # "close": row["Close"],
-                # "volume": row["Volume"]
                 "ticker": ticker,
                 "trade_date": date.strftime('%Y-%m-%d'),
                 "open": float(row["Open"]),
@@ -96,9 +93,10 @@ def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
             })
         return results
     else:
-        print(f"No data available for {ticker} between {start_date} and {end_date}.")
+        #print(f"No data available for {ticker} between {start_date} and {end_date}.")
         return []
-    
+
+
 def fetch_symbols_from_db():
   query="""
     select symbol,name, exchange, etf  from stock_symbols
