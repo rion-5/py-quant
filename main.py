@@ -1,4 +1,4 @@
-from data.data_fetcher import fetch_stock_data_from_yfinance,fetch_recent_trading_days_from_db
+from data.data_fetcher import fetch_symbols_from_db
 from strategies.momentum import filter_and_rank_stocks
 
 # 날짜 설정
@@ -15,8 +15,9 @@ top_n = 20
 
 # 미국 주식 티커 가져오기 (예: NASDAQ, NYSE 종목)
 def get_us_stock_tickers():
-    return ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "NFLX", "AMD", "INTC"]
-
+    symbols = fetch_symbols_from_db()
+    tickers = [ticker['symbol'] for ticker in symbols]
+    return tickers 
 # 실행
 if __name__ == "__main__":
     tickers = get_us_stock_tickers()
