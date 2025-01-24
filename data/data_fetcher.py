@@ -115,3 +115,25 @@ def fetch_symbols_from_db():
   finally:
     if conn:
       conn.close()
+
+def fetch_momentum_symbols_from_db(start_date, end_date, volume):
+  query="""
+    select ticker, count(*) from stock_data
+    where trade_date between %s and %s
+    and volume >= %s
+    group by ticker
+    having count(*) >= (select count(distinct trade_date) from stock_data
+                        where trade_date between %s and %s) - 2 ;
+    """
+  try:
+    with get_connection() as conn:
+      with conn.cursor(cursor_factory=RealDictCursor) as cur:
+       cur.execute(query,(start_date,end_date,volume,start_date,end_date))
+       return cur.fetchall()
+  except Exception as e:
+    print(f"Query Execution error: {e}")
+    return None
+  finally:
+    if conn:
+      conn.close()
+
