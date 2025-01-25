@@ -5,15 +5,19 @@ import pandas as pd
 
 def fetch_stock_data_from_db(symbol, start_date, end_date):
   query = """
-  SELECT trading_date, close, volume
-  FROM stock
-  WHERE symbol = %s AND trading_date BETWEEN %s AND %s;
+  SELECT trade_date as Trade_date, close_price as Close, volume as Volume
+  FROM stock_data
+  WHERE ticker = %s AND trade_date BETWEEN %s AND %s;
   """
   try:
     with get_connection() as conn:
       with conn.cursor(cursor_factory = RealDictCursor) as cur:
         cur.execute(query, (symbol, start_date, end_date))
-        return cur.fetchall()
+        rows = cur.fetchall()
+        data = pd.DataFrame(rows)
+        # Ensure column names' first letter remains capitalized
+        data.columns = [col.capitalize() for col in data.columns]
+        return data
   except Exception as e:
     print(f"Query Execution error: {e}")
     return None
@@ -128,8 +132,12 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume):
   try:
     with get_connection() as conn:
       with conn.cursor(cursor_factory=RealDictCursor) as cur:
-       cur.execute(query,(start_date,end_date,volume,start_date,end_date))
-       return cur.fetchall()
+        cur.execute(query,(start_date,end_date,volume,start_date,end_date))
+        rows = cur.fetchall()
+        # Convert query result to a DataFrame
+        df = pd.DataFrame(rows)
+        # Return 'ticker' column as a tuple
+        return tuple(df['ticker'])
   except Exception as e:
     print(f"Query Execution error: {e}")
     return None
