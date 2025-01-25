@@ -120,19 +120,20 @@ def fetch_symbols_from_db():
     if conn:
       conn.close()
 
-def fetch_momentum_symbols_from_db(start_date, end_date, volume):
+def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_price):
   query="""
     select ticker,avg(volume) from stock_data
     where trade_date between %s and %s
     and volume >= %s
+    and close_price between %s and %s
     group by ticker
-    having count(*) = (select count(distinct trade_date) from stock_data
+    having count(*) >= (select count(distinct trade_date) from stock_data
                         where trade_date between %s and %s) - 2 ;
     """
   try:
     with get_connection() as conn:
       with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(query,(start_date,end_date,volume,start_date,end_date))
+        cur.execute(query,(start_date,end_date,volume,min_price, max_price, start_date,end_date))
         rows = cur.fetchall()
         # Convert query result to a DataFrame
         df = pd.DataFrame(rows)

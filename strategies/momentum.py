@@ -20,19 +20,20 @@ def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price,
     for ticker in tickers:
         try:
             data = get_stock_data(ticker, start_date, end_date)
-            print(data)
+            # print(data)
             # 필터 조건 적용
-            if not apply_filters(data, min_volume, min_price, max_price, min_diff_ratio):
-                continue
+            # if not apply_filters(data, min_volume, min_price, max_price, min_diff_ratio):
+            #     continue
 
             # Sortino Ratio 계산
             sortino_ratio = calculate_sortino_ratio(data['Daily Return'])
+            
             if sortino_ratio < min_sortino:
                 continue
 
             # 주가 상승율 계산
-            price_increase_ratio = (data['Close'].iloc[-1] - data['Close'].iloc[0]) / data['Close'].iloc[0]
-
+            price_increase_ratio = float((data['Close'].iloc[-1] - data['Close'].iloc[0]) / data['Close'].iloc[0])
+            # print(f"{ticker} {sortino_ratio} {price_increase_ratio}")
             filtered_stocks.append({
                 "Ticker": ticker,
                 "Sortino Ratio": sortino_ratio,

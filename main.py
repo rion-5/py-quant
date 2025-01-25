@@ -2,11 +2,11 @@ from data.data_fetcher import fetch_symbols_from_db, fetch_momentum_symbols_from
 from strategies.momentum import filter_and_rank_stocks
 
 # 날짜 설정
-start_date = "2024-12-04"
-end_date = "2024-12-23"
+start_date = "2025-01-01"
+end_date = "2025-01-22"
 
 # 조건 설정
-min_volume = 5000000
+min_volume = 8000000
 min_price = 100
 max_price = 1000
 min_sortino = 0.2
@@ -23,7 +23,7 @@ def get_us_stock_tickers():
 # 실행
 if __name__ == "__main__":
     # tickers = get_us_stock_tickers()
-    tickers =fetch_momentum_symbols_from_db(start_date, end_date, min_volume)
+    tickers =fetch_momentum_symbols_from_db(start_date, end_date, min_volume, min_price, max_price)
     # print(tickers)
     result = filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, min_sortino, min_diff_ratio, top_n)
     print(result)
