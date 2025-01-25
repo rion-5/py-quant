@@ -118,11 +118,11 @@ def fetch_symbols_from_db():
 
 def fetch_momentum_symbols_from_db(start_date, end_date, volume):
   query="""
-    select ticker, count(*) from stock_data
+    select ticker,avg(volume) from stock_data
     where trade_date between %s and %s
     and volume >= %s
     group by ticker
-    having count(*) >= (select count(distinct trade_date) from stock_data
+    having count(*) = (select count(distinct trade_date) from stock_data
                         where trade_date between %s and %s) - 2 ;
     """
   try:
