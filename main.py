@@ -2,8 +2,8 @@ from data.data_fetcher import fetch_symbols_from_db, fetch_momentum_symbols_from
 from strategies.momentum import filter_and_rank_stocks
 
 # 날짜 설정
-start_date = "2025-01-01"
-end_date = "2025-01-22"
+start_date = "2025-01-15"
+end_date = "2025-01-23"
 
 # 조건 설정
 min_volume = 8000000
