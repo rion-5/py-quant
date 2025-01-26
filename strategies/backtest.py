@@ -22,6 +22,13 @@ class MomentumStrategy(bt.Strategy):
                 # 조건을 만족하는 종목에 대해 매수 신호 생성
                 self.buy()
 
+    def notify_order(self, order):
+        if order.status in [order.Completed]:
+            if order.isbuy():
+                print(f'BUY EXECUTED, {order.data._name}, Date: {bt.num2date(order.executed.dt)}, Price: {order.executed.price}, Cost: {order.executed.value}, Comm: {order.executed.comm}')
+            elif order.issell():
+                print(f'SELL EXECUTED, {order.data._name}, Date: {bt.num2date(order.executed.dt)}, Price: {order.executed.price}, Cost: {order.executed.value}, Comm: {order.executed.comm}')
+
 # 백테스트 실행
 def run_backtest(tickers, start_date, end_date):
     cerebro = bt.Cerebro()
@@ -35,11 +42,18 @@ def run_backtest(tickers, start_date, end_date):
         data['Trade_date'] = pd.to_datetime(data['Trade_date'])
         data.set_index('Trade_date', inplace=True)
         
-        data_bt = bt.feeds.PandasData(dataname=data)
+        # NaN 값 제거
+        data.dropna(inplace=True)
+        
+        data_bt = bt.feeds.PandasData(dataname=data, name=ticker)
         cerebro.adddata(data_bt)
 
     # 초기 자본 설정
     cerebro.broker.setcash(100000.0)
+
+    # 매수/매도 화살표 표시를 위한 observer 추가
+    cerebro.addobserver(bt.observers.BuySell)
+    cerebro.addobserver(bt.observers.Value)
 
     # 백테스트 실행
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
@@ -47,17 +61,22 @@ def run_backtest(tickers, start_date, end_date):
     print('Ending Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
     # 결과 시각화
-    cerebro.plot()
+    cerebro.plot(style='candlestick')
 
 if __name__ == "__main__":
+    start_date = '2024-12-18'
+    end_date = '2025-01-26'
+    min_volume = 8000000
+    min_price = 100
+    max_price = 1000
+    top_n = 10
     # 조건에 맞는 종목 리스트 (예시)
     tickers = fetch_momentum_symbols_from_db(
-        '2024-01-01', '2024-01-31', 8000000, 100, 1000, 3
+        start_date, end_date, min_volume, min_price, max_price, top_n
     )
 
     # Filter and rank stocks
-    result = filter_and_rank_stocks(
-        tickers,
-        '2024-01-01', '2024-01-31', 8000000, 100, 1000, 0.2, 0.2, 3
-    )
-    run_backtest(tickers, '2024-01-01', '2024-01-31')
+    result = filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, -0.2, 0.0, top_n)
+    print(result)
+    # print(result['Ticker'])
+    run_backtest(result['Ticker'], start_date, end_date)

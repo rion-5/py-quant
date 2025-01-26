@@ -21,7 +21,7 @@ default_min_price = 100
 default_max_price = 1000
 default_min_sortino = 0.2
 default_min_diff_ratio = 0.2
-default_top_n = 3
+default_top_n = 20
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Filter and rank momentum stocks.")

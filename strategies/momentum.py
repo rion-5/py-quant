@@ -38,7 +38,9 @@ def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price,
                 "Ticker": ticker,
                 "Sortino Ratio": sortino_ratio,
                 "Price Increase Ratio": price_increase_ratio,
-                "Combined Score": sortino_ratio + price_increase_ratio,
+                # "Combined Score": sortino_ratio * 0.7 + price_increase_ratio * 0.3,
+                "Combined Score": sortino_ratio * 0.3 + price_increase_ratio * 0.7,
+
                 "Price Range": f"{data['Close'].min():.2f} - {data['Close'].max():.2f}",
                 "Average Volume": data['Volume'].mean()
             })

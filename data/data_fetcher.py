@@ -5,7 +5,12 @@ import pandas as pd
 
 def fetch_stock_data_from_db(symbol, start_date, end_date):
   query = """
-  SELECT trade_date as Trade_date, close_price as Close, volume as Volume
+  SELECT trade_date as Trade_date,
+         open_price as Open,
+         high_price as High,
+         low_price as Low ,
+         close_price as Close, 
+         volume as Volume
   FROM stock_data
   WHERE ticker = %s AND trade_date BETWEEN %s AND %s;
   """
