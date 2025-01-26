@@ -45,11 +45,11 @@ def fetch_holidays_from_db(year):
 
 def fetch_recent_trading_days_from_db(days=14):
   query = """
-    SELECT MIN(trading_date) AS start_date,
-           MAX(trading_date) AS end_date
-    FROM (SELECT distinct trading_date
-          FROM stock
-          ORDER BY trading_date DESC LIMIT %s);
+    SELECT MIN(trade_date) AS start_date,
+           MAX(trade_date) AS end_date
+    FROM (SELECT distinct trade_date
+          FROM stock_data
+          ORDER BY trade_date DESC LIMIT %s);
     """
   try:
     with get_connection() as conn:
