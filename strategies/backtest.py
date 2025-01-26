@@ -52,12 +52,12 @@ def run_backtest(tickers, start_date, end_date):
 if __name__ == "__main__":
     # 조건에 맞는 종목 리스트 (예시)
     tickers = fetch_momentum_symbols_from_db(
-        '2024-01-01', '2024-01-31', 8000000, 100, 1000
+        '2024-01-01', '2024-01-31', 8000000, 100, 1000, 3
     )
 
     # Filter and rank stocks
     result = filter_and_rank_stocks(
         tickers,
-        '2024-01-01', '2024-01-31', 8000000, 100, 1000, 0.2, 0.2, 20
+        '2024-01-01', '2024-01-31', 8000000, 100, 1000, 0.2, 0.2, 3
     )
     run_backtest(tickers, '2024-01-01', '2024-01-31')

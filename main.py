@@ -21,7 +21,7 @@ default_min_price = 100
 default_max_price = 1000
 default_min_sortino = 0.2
 default_min_diff_ratio = 0.2
-default_top_n = 20
+default_top_n = 3
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Filter and rank momentum stocks.")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     # Fetch tickers based on momentum criteria
     tickers = fetch_momentum_symbols_from_db(
-        args.start_date, args.end_date, args.min_volume, args.min_price, args.max_price
+        args.start_date, args.end_date, args.min_volume, args.min_price, args.max_price, args.top_n
     )
 
     # Filter and rank stocks
