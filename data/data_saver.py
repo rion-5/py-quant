@@ -10,9 +10,9 @@ def save_stock_data_in_db(stock_data):
 
     insert_query = """
     INSERT INTO stock_data (ticker, trade_date, open_price, high_price, low_price, close_price, volume)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    ON CONFLICT (ticker, trade_date) DO NOTHING;
+    VALUES (%s, %s, %s, %s, %s, %s, %s);
     """
+    # ON CONFLICT (ticker, trade_date) DO NOTHING
     conn = None
     try:
       # Get database connection

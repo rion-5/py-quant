@@ -64,19 +64,19 @@ def run_backtest(tickers, start_date, end_date):
     cerebro.plot(style='candlestick')
 
 if __name__ == "__main__":
-    start_date = '2024-12-18'
-    end_date = '2025-01-26'
+    start_date = '2025-01-03'
+    end_date = '2025-01-24'
     min_volume = 8000000
     min_price = 100
     max_price = 1000
-    top_n = 10
+    top_n = 20
     # 조건에 맞는 종목 리스트 (예시)
     tickers = fetch_momentum_symbols_from_db(
         start_date, end_date, min_volume, min_price, max_price, top_n
     )
 
     # Filter and rank stocks
-    result = filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, -0.2, 0.0, top_n)
+    result = filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, 0.2, 0.2, top_n)
     print(result)
     # print(result['Ticker'])
     run_backtest(result['Ticker'], start_date, end_date)

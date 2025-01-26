@@ -56,6 +56,6 @@ if __name__ == "__main__":
         args.min_diff_ratio,
         args.top_n
     )
-
+    print(f"{args.start_date} {args.end_date}")
     # Print result
     print(result)

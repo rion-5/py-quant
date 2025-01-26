@@ -46,7 +46,6 @@ def main():
       stock_data = fetch.fetch_stock_data_from_yfinance(symbol, start_date, adjusted_end_date)
       save.save_stock_data_in_db(stock_data)
       print(f"{index} {symbol} {start_date} {end_date} ")  # 현재 번호와 ticker 출력
-      print(f"{index} {symbol} {start_date} {end_date} ")  # 현재 번호와 ticker 출력
     
     # 종료 시간 기록
     end_time = datetime.now()
