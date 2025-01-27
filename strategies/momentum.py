@@ -3,15 +3,21 @@ import pandas as pd
 from strategies.sortino_ratio import calculate_sortino_ratio
 from strategies.filters import apply_filters
 from data.data_fetcher import fetch_stock_data_from_db
+from datetime import datetime, timedelta, date
 
 
 # 데이터 가져오기
 def get_stock_data(ticker, start_date, end_date):
     # stock = yf.Ticker(ticker)
     # data = stock.history(start=start_date, end=end_date)
-    data = fetch_stock_data_from_db(ticker, start_date, end_date)
+    new_date_str = (datetime.strptime(start_date, '%Y-%m-%d') - timedelta(days=3)).strftime('%Y-%m-%d')
+    data = fetch_stock_data_from_db(ticker, new_date_str, end_date)
     data['Daily Return'] = data['Close'].pct_change()
-    return data.dropna()
+
+    start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+    data = data[data['Trade_date'] >= start_date_obj].dropna()
+    # print(data)
+    return data
 
 # 종목 필터링 및 랭킹
 def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, min_sortino, min_diff_ratio, top_n):
