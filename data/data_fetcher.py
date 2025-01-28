@@ -133,7 +133,8 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_
     and close_price between %s and %s
     group by ticker
     having count(*) >= (select count(distinct trade_date) from stock_data
-                        where trade_date between %s and %s) - 2 
+                        where trade_date between %s and %s) - (select count(distinct trade_date) from stock_data
+                        where trade_date between %s and %s)/14 
     limit %s;
     """
   try:
