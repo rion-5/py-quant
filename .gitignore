@@ -14,7 +14,7 @@ conda_env/
 
 # Jupyter Notebook 관련
 .ipynb_checkpoints/
-#*.ipynb
+*.ipynb
 
 # 환경 변수 파일
 .env
