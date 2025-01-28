@@ -140,7 +140,7 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_
   try:
     with get_connection() as conn:
       with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(query,(start_date,end_date,volume,min_price, max_price, start_date,end_date, top_n))
+        cur.execute(query,(start_date,end_date,volume,min_price, max_price, start_date,end_date,start_date,end_date, top_n))
         rows = cur.fetchall()
         # Convert query result to a DataFrame
         df = pd.DataFrame(rows)
