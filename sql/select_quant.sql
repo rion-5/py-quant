@@ -1,0 +1,15 @@
+    -- SELECT 
+    --     ticker,
+    --     trade_date,
+    --     open_price,
+    --     high_price,
+    --     low_price,
+    --     close_price,
+    --     volume
+    -- FROM stock_data
+    -- WHERE trade_date BETWEEN '2025-01-01' AND '2025-01-21'
+    --   AND volume >= 8000000
+    --   AND close_price BETWEEN 100 AND 1000
+    -- GROUP BY ticker, trade_date, open_price, high_price, low_price, close_price, volume
+
+-- 조건 1 : 
