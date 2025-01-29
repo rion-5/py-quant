@@ -14,8 +14,10 @@ def get_stock_data(ticker, start_date, end_date):
     # data = fetch_stock_data_from_db(ticker, new_date_str, end_date)
     data['Daily Return'] = data['Close'].pct_change()
 
-    start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
-    data = data[data['Trade_date'] >= start_date_obj].dropna()
+    # start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+    # data = data[data['Trade_date'] >= start_date_obj].dropna()
+    start_date_obj = pd.to_datetime(start_date).tz_localize('America/New_York')
+    data = data.loc[data.index >= start_date_obj].dropna()
     # print(data)
     return data
 
