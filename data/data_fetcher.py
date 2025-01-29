@@ -127,10 +127,22 @@ def fetch_symbols_from_db():
 
 def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_price, top_n):
   query="""
+    WITH last_trading_day AS (
+    SELECT MAX(trade_date) AS trade_date
+    FROM stock_data
+    WHERE trade_date <= %s
+    AND trade_date NOT IN (SELECT holiday_date FROM market_holidays)
+    AND EXTRACT(DOW FROM trade_date) NOT IN (0, 6)
+    )
     select ticker,avg(volume) from stock_data
-    where trade_date between %s and %s
+    WHERE ticker IN (
+    SELECT ticker 
+    FROM stock_data
+    WHERE trade_date = (SELECT trade_date FROM last_trading_day)
+    AND close_price BETWEEN %s AND %s
+    )
+    and trade_date between %s and %s
     and volume >= %s
-    and close_price between %s and %s
     group by ticker
     having count(*) >= (select count(distinct trade_date) from stock_data
                         where trade_date between %s and %s) - (select count(distinct trade_date) from stock_data
@@ -140,7 +152,7 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_
   try:
     with get_connection() as conn:
       with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(query,(start_date,end_date,volume,min_price, max_price, start_date,end_date,start_date,end_date, top_n))
+        cur.execute(query,(end_date, min_price, max_price, start_date,end_date,volume, start_date,end_date,start_date,end_date, top_n))
         rows = cur.fetchall()
         # Convert query result to a DataFrame
         df = pd.DataFrame(rows)

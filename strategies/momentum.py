@@ -8,10 +8,10 @@ from datetime import datetime, timedelta, date
 
 # 데이터 가져오기
 def get_stock_data(ticker, start_date, end_date):
-    # stock = yf.Ticker(ticker)
-    # data = stock.history(start=start_date, end=end_date)
+    stock = yf.Ticker(ticker)
+    data = stock.history(start=start_date, end=end_date)
     new_date_str = (datetime.strptime(start_date, '%Y-%m-%d') - timedelta(days=3)).strftime('%Y-%m-%d')
-    data = fetch_stock_data_from_db(ticker, new_date_str, end_date)
+    # data = fetch_stock_data_from_db(ticker, new_date_str, end_date)
     data['Daily Return'] = data['Close'].pct_change()
 
     start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
