@@ -106,6 +106,11 @@ def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
         return []
 
 
+def fetch_stock_data_from_yf_download(ticker, start_date, end_date):
+  download_data = yf.download(ticker, start=start_date,end=end_date, progress=False)
+  data = download_data.xs(ticker, axis=1, level=1)
+  return data
+
 def fetch_symbols_from_db():
   query="""
     select symbol,name, exchange, etf  from stock_symbols

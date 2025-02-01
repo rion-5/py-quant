@@ -50,6 +50,7 @@ def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price,
                 "Combined Score": sortino_ratio * 0.3 + price_increase_ratio * 0.7,
 
                 "Price Range": f"{data['Close'].min():.2f} - {data['Close'].max():.2f}",
+                "Last Close": data['Close'].iloc[-1],
                 "Average Volume": data['Volume'].mean()
             })
 
