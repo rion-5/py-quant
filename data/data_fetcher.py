@@ -2,6 +2,7 @@ import yfinance as yf
 from psycopg2.extras import RealDictCursor
 from data.database import get_connection
 import pandas as pd
+from datetime import date
 
 def fetch_stock_data_from_db(symbol, start_date, end_date):
   query = """
@@ -195,3 +196,36 @@ def fetch_stock_info_from_yfinance(ticker):
     except Exception as e:
         print(f"Unexpected error for {ticker}: {e}")
         return {}
+
+def fetch_stock_financials_from_yfinance(ticker):
+    """
+    Fetch stock financials history for a given ticker from yfinance.
+
+    Args:
+        ticker (str): The stock ticker symbol (e.g., "AAPL").
+
+    Returns:
+        dict: A dictionary containing financials history.
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        stats = stock.info  # yfinance의 info 딕셔너리에서 주요 지표 추출
+    except Exception as e:
+        print(f"Error fetching financials for {ticker}: {e}")
+        return None
+
+    financials_data = {
+        "ticker": ticker,
+        "recorded_at": date.today().strftime('%Y-%m-%d'),  # 오늘 날짜 기준
+        "trailing_pe": stats.get("trailingPE"),
+        "forward_pe": stats.get("forwardPE"),
+        "book_value": stats.get("bookValue"),
+        "price_to_book": stats.get("priceToBook"),
+        "earnings_growth": stats.get("earningsGrowth"),
+        "revenue_growth": stats.get("revenueGrowth"),
+        "return_on_assets": stats.get("returnOnAssets"),
+        "return_on_equity": stats.get("returnOnEquity"),
+        "debt_to_equity": stats.get("debtToEquity")
+    }
+
+    return financials_data

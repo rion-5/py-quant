@@ -13,3 +13,16 @@ CREATE TABLE stock_financials_history (
     debt_to_equity NUMERIC,
     PRIMARY KEY (ticker, recorded_at) -- 티커+날짜 조합으로 고유값 설정
 );
+
+-- 재무 정보 (stock_financials_history 테이블)
+
+-- ticker
+-- trailing_pe (과거 PER)
+-- forward_pe (미래 PER)
+-- book_value (주당 순자산)
+-- price_to_book (PBR)
+-- earnings_growth (이익 성장률)
+-- revenue_growth (매출 성장률)
+-- return_on_assets (ROA)
+-- return_on_equity (ROE)
+-- debt_to_equity (부채비율)
