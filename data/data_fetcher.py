@@ -170,3 +170,28 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_
     if conn:
       conn.close()
 
+def fetch_stock_info_from_yfinance(ticker):
+    """
+    Fetch basic stock information for a given ticker.
+
+    Args:
+        ticker (str): The stock ticker symbol (e.g., "TSLA").
+
+    Returns:
+        dict: A dictionary with basic stock information.
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        info = stock.info  # yfinance의 기본 정보 가져오기
+
+        return {
+            "ticker": ticker,
+            "company_name": info.get("longName", "N/A"),
+            "industry": info.get("industry", "N/A"),
+            "sector": info.get("sector", "N/A"),
+            "market_cap": info.get("marketCap", None),
+            "currency": info.get("currency", "N/A"),
+        }
+    except Exception as e:
+        print(f"Unexpected error for {ticker}: {e}")
+        return {}

@@ -21,7 +21,7 @@ class StockAnalyzer:
         rsi = 100 - (100 / (1 + rs))
 
         # 52주 고점 대비 현재 주가 비율
-        high_52w = close_prices.rolling(window=252).max()
+        high_52w = close_prices.rolling(window=249).max()
         current_price = close_prices.iloc[-1]
         high_52w_ratio = current_price / high_52w.iloc[-1]
 
@@ -50,7 +50,7 @@ class StockAnalyzer:
         return {
             "PER": self.info.get("trailingPE", "N/A"),
             "PBR": self.info.get("priceToBook", "N/A"),
-            "EPS": self.info.get("epsTrailingTwelveMonths", "N/A"),
+            "EPS": self.info.get("trailingEps", "N/A"),
             "ROE": self.info.get("returnOnEquity", "N/A"),
             "Revenue Growth": self.info.get("revenueGrowth", "N/A"),
             "Debt to Equity": self.info.get("debtToEquity", "N/A")
@@ -111,6 +111,6 @@ class StockAnalyzer:
         self.plot_charts()
 
 # 사용 예제
-ticker = "TSLA"
-analyzer = StockAnalyzer(ticker)
-analyzer.summarize()
+# ticker = "TSLA"
+# analyzer = StockAnalyzer(ticker)
+# analyzer.summarize()
