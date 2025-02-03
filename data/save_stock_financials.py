@@ -16,7 +16,7 @@ def main():
         try:
             financials_data = fetch.fetch_stock_financials_from_yfinance(symbol)
             if financials_data:  # 데이터가 비어있지 않을 때만 저장
-                #save.save_stock_financials_in_db(financials_data)
+                save.save_stock_financials_in_db(financials_data)
                 print(f"{index}/{len(tickers)} {symbol} 저장 완료")
             else:
                 print(f"{index}/{len(tickers)} {symbol} 정보 없음")

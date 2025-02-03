@@ -1,6 +1,6 @@
 -- 3. 재무 정보 히스토리 (분기/연도별 저장)
 CREATE TABLE stock_financials_history (
-    ticker VARCHAR REFERENCES stocks(ticker),
+    ticker VARCHAR REFERENCES stock_info(ticker),
     recorded_at DATE NOT NULL,  -- 재무 정보가 기록된 날짜
     trailing_pe NUMERIC,
     forward_pe NUMERIC,
