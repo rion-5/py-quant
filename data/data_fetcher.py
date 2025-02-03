@@ -2,6 +2,7 @@ import yfinance as yf
 from psycopg2.extras import RealDictCursor
 from data.database import get_connection
 import pandas as pd
+import numpy as np
 from datetime import date
 
 def fetch_stock_data_from_db(symbol, start_date, end_date):
@@ -229,3 +230,68 @@ def fetch_stock_financials_from_yfinance(ticker):
     }
 
     return financials_data
+
+def get_momentum_indicators(ticker):
+    # yfinance에서 주식 데이터 가져오기
+    stock = yf.Ticker(ticker)
+    data = stock.history(period="1y")  # 1년 데이터 가져오기
+
+    # 지표 계산
+    rsi = compute_rsi(data['Close'])  # RSI 계산 (별도의 함수 필요)
+    high_52w_ratio = data['Close'].iloc[-1] / data['Close'].max()
+    ma_60 = data['Close'].rolling(window=60).mean().iloc[-1]
+    ma_200 = data['Close'].rolling(window=200).mean().iloc[-1]
+    
+    # 가격 변화 계산
+    change_1m = (data['Close'].iloc[-1] - data['Close'].iloc[-22]) / data['Close'].iloc[-22] * 100  # 1개월 변화율
+    change_3m = (data['Close'].iloc[-1] - data['Close'].iloc[-66]) / data['Close'].iloc[-66] * 100  # 3개월 변화율
+    change_6m = (data['Close'].iloc[-1] - data['Close'].iloc[-132]) / data['Close'].iloc[-132] * 100  # 6개월 변화율
+    change_1y = (data['Close'].iloc[-1] - data['Close'].iloc[0]) / data['Close'].iloc[0] * 100 # 1년 변화율
+
+
+    return {
+        "RSI": rsi,
+        "52W High Ratio": high_52w_ratio,
+        "60-Day MA": ma_60,
+        "200-Day MA": ma_200,
+        "1M Change": change_1m,
+        "3M Change": change_3m,
+        "6M Change": change_6m,
+        "1Y Change": change_1y
+    }
+
+def compute_rsi(series, period=14):
+    delta = series.diff()
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+    
+    avg_gain = gain.rolling(window=period, min_periods=1).mean()
+    avg_loss = loss.rolling(window=period, min_periods=1).mean()
+    
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    
+    return rsi.iloc[-1]
+
+def get_value_indicators(ticker):
+    stock = yf.Ticker(ticker)
+    
+    # 재무 정보 가져오기
+    info = stock.info
+    
+    # 지표 계산
+    per = info.get('trailingPE', np.nan)  # PER
+    pbr = info.get('priceToBook', np.nan)  # PBR
+    eps = info.get('trailingEps', np.nan)  # EPS
+    roe = info.get('returnOnEquity', np.nan)  # ROE
+    revenue_growth = info.get('revenueGrowth', np.nan)  # 매출 성장률
+    debt_to_equity = info.get('debtToEquity', np.nan)  # 부채비율
+    
+    return {
+        "PER": per,
+        "PBR": pbr,
+        "EPS": eps,
+        "ROE": roe,
+        "Revenue Growth": revenue_growth,
+        "Debt to Equity": debt_to_equity
+    }

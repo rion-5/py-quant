@@ -9,7 +9,6 @@ def main():
 
     # 시작 시간 기록
     start_time = datetime.now()
-    print(f"전체 종목 수: {len(tickers)}")
 
     # 종목별 financials_data 가져와서 저장
     for index, symbol in enumerate(tickers, start=1):
@@ -25,7 +24,8 @@ def main():
 
     # 종료 시간 기록
     end_time = datetime.now()
-
+    
+    print(f"전체 종목 수: {len(tickers)}")
     print(f"시작시간: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"종료시간: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
 

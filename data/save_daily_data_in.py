@@ -14,17 +14,20 @@ def main():
 
     # 시작 시간 기록
     start_time = datetime.now()
-    print(f"전체 데이터 개수 : {len(tickers)}")  # 전체 데이터 개수 출력
 
     # for symbol in tickers:
     for index, symbol in enumerate(tickers, start=1):  # enumerate로 번호와 데이터를 가져옴
       stock_data = fetch.fetch_stock_data_from_yfinance(symbol, yesterday, today)
-      save.save_stock_data_in_db(stock_data)
-      print(f"{index} {symbol}")  # 현재 번호와 ticker 출력
+      if stock_data:
+        save.save_stock_data_in_db(stock_data)
+        print(f"{index}/{len(tickers)} {symbol} 저장 완료")
+      else:
+        print(f"{index}/{len(tickers)} {symbol} 정보 없음")
     
     # 종료 시간 기록
     end_time = datetime.now()
 
+    print(f"전체 종목 수 : {len(tickers)}")  # 전체 데이터 개수 출력
     print(f"시작시간: {start_time.strftime("%Y-%m-%d %H:%M:%S")}")  # 시작 시간 출력    
     print(f"종료시간: {end_time.strftime("%Y-%m-%d %H:%M:%S")}")  # 종료 시간 출력
 

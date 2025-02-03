@@ -1,6 +1,7 @@
 import argparse
 from data.data_fetcher import fetch_symbols_from_db, fetch_momentum_symbols_from_db, fetch_recent_trading_days_from_db
 from strategies.momentum import filter_and_rank_stocks
+import analysis.financial_momentum as fm
 
 # def get_us_stock_tickers():
 #     """Returns a list of US stock tickers."""
@@ -19,7 +20,7 @@ default_end_date = result[0][1].strftime('%Y-%m-%d')
 default_min_volume = 8000000
 default_min_price = 100
 default_max_price = 1000
-default_min_sortino = 0.2
+default_min_sortino = -0.5
 default_min_diff_ratio = 0.2
 default_top_n = 20
 
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     tickers = fetch_momentum_symbols_from_db(
         args.start_date, args.end_date, args.min_volume, args.min_price, args.max_price, args.top_n
     )
+    # tickers = fetch_momentum_symbols_from_db(default_start_date,default_end_date, default_min_volume, default_min_price, default_max_price, default_top_n)
 
     # Filter and rank stocks
     result = filter_and_rank_stocks(
@@ -56,6 +58,12 @@ if __name__ == "__main__":
         args.min_diff_ratio,
         args.top_n
     )
+    # result = filter_and_rank_stocks(tickers,default_start_date,default_end_date, default_min_volume, default_min_price, default_max_price, default_min_sortino, default_min_diff_ratio, default_top_n)
+
     print(f"{args.start_date} {args.end_date}")
     # Print result
     print(result)
+
+    fm_result = fm.fetch_stock_analysis(result['Ticker'])
+
+    print(fm_result)
