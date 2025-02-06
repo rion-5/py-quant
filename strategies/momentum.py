@@ -28,7 +28,7 @@ def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price,
     for ticker in tickers:
         try:
             data = get_stock_data(ticker, start_date, end_date)
-            # print(data)
+            #print(data)
             # 필터 조건 적용
             # if not apply_filters(data, min_volume, min_price, max_price, min_diff_ratio):
             #     continue

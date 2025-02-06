@@ -20,7 +20,7 @@ default_end_date = result[0][1].strftime('%Y-%m-%d')
 default_min_volume = 10000000
 default_min_price = 50
 default_max_price = 1000
-default_min_sortino = 0.005
+default_min_sortino = -0.5
 default_min_diff_ratio = 0.2
 default_top_n = 20
 
