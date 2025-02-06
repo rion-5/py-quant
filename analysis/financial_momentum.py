@@ -7,7 +7,7 @@ def fetch_stock_analysis(tickers):
     result = {}
     
     for ticker in tickers:
-        print(f"Processing {ticker}...")
+        #print(f"Processing {ticker}...")
         
         # 모멘텀 지표 가져오기
         momentum = fetch.get_momentum_indicators(ticker)
