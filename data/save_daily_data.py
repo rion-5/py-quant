@@ -2,6 +2,7 @@ import data.data_fetcher as fetch
 import data.data_saver as save
 from data.trading_calendar import is_trading_day
 from datetime import datetime, timedelta, date
+# import time
 
 def main():
 
@@ -18,6 +19,7 @@ def main():
     # for symbol in tickers:
     for index, symbol in enumerate(tickers, start=1):  # enumerate로 번호와 데이터를 가져옴
       stock_data = fetch.fetch_stock_data_from_yfinance(symbol, yesterday, today)
+      # time.sleep(0.8)
       if stock_data:
         save.save_stock_data_in_db(stock_data)
         print(f"{index}/{len(tickers)} {symbol} 저장 완료")
