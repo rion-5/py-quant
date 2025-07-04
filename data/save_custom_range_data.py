@@ -2,7 +2,7 @@ import data.data_fetcher as fetch
 import data.data_saver as save
 from data.trading_calendar import is_trading_day
 from datetime import datetime, timedelta, date
-
+import time
 import argparse
 from datetime import datetime
 
@@ -44,6 +44,7 @@ def main():
     # for symbol in tickers:
     for index, symbol in enumerate(tickers, start=1):  # enumerate로 번호와 데이터를 가져옴
       stock_data = fetch.fetch_stock_data_from_yfinance(symbol, start_date, adjusted_end_date)
+      time.sleep(1)
       save.save_stock_data_in_db(stock_data)
       print(f"{index} {symbol} {start_date} {end_date} ")  # 현재 번호와 ticker 출력
     
