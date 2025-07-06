@@ -2,6 +2,7 @@ import data.data_fetcher as fetch
 import data.data_saver as save
 from data.trading_calendar import is_trading_day
 from datetime import datetime, timedelta, date
+import time
 
 def main():
     symbols = fetch.fetch_symbols_from_db()
@@ -15,6 +16,7 @@ def main():
         try:
             financials_data = fetch.fetch_stock_financials_from_yfinance(symbol)
             if financials_data:  # 데이터가 비어있지 않을 때만 저장
+                time.sleep(1.5)
                 save.save_stock_financials_in_db(financials_data)
                 print(f"{index}/{len(tickers)} {symbol} 저장 완료")
             else:

@@ -19,3 +19,6 @@ where trade_date in
 	where count < 6600
 );
 
+
+delete from stock_info;
+delete from stock_financials_history ;
