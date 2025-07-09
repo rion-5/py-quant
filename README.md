@@ -25,7 +25,7 @@
     - python=3.9
   ```
 - **추가 팁**: 이 파일을 기반으로 환경을 복원하려면 `conda env create -f environment.yml` 명령어를 사용합니다.
-
+- **추가 팁**: ubuntu에서 사용하려면 `conda env export --no-builds > environment_ubuntu.yml`
 ---
 
 ### **3. `git config --global credential.helper store`**
@@ -44,6 +44,3 @@
   - 각 명령을 나눠서 사용할 수도 있습니다.
   - 특정 파일만 추가하려면 `git add filename`을 사용하면 됩니다.
 
----
-
-필요한 내용이나 추가적으로 궁금한 점 있으면 말씀해주세요! 😊
