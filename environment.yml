@@ -12,4 +12,4 @@ dependencies:
   - python-dotenv
   - pip
   - pip:
-      - trading-calendar
+
