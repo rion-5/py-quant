@@ -24,8 +24,7 @@
     - pandas=2.0.1
     - python=3.9
   ```
-- **추가 팁**: 이 파일을 기반으로 환경을 복원하려면 `conda env create -f environment.yml` 명령어를 사용합니다.
-- **추가 팁**: ubuntu에서 사용하려면 `conda env export --no-builds > environment_ubuntu.yml`
+- **추가 팁**: 이 파일을 기반으로 환경을 만들려면 `conda env create -n zena -f environment.yml` 명령어를 사용합니다. 이때 이 가상환경을 미리 만들고 activate 할 필요는 없습니다. 만약 가상환경이 만들어져서 activate 했다면 `conda env update -n zena -f environment.yml --prune` 명령어를 사용합니다. -- prune 옵션은 environment.yml 에 벗는 패키지를 제거하고 정리해줍니다.
 ---
 
 ### **3. `git config --global credential.helper store`**
