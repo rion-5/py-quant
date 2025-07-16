@@ -4,7 +4,7 @@ from strategies.sortino_ratio import calculate_sortino_ratio
 from strategies.filters import apply_filters
 from data.data_fetcher import fetch_stock_data_from_db
 from datetime import datetime, timedelta, date
-
+import time
 
 # 데이터 가져오기
 def get_stock_data(ticker, start_date, end_date):
@@ -28,6 +28,7 @@ def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price,
     for ticker in tickers:
         try:
             data = get_stock_data(ticker, start_date, end_date)
+            time.sleep(1.5)
             #print(data)
             # 필터 조건 적용
             # if not apply_filters(data, min_volume, min_price, max_price, min_diff_ratio):
