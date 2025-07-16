@@ -7,7 +7,7 @@ order by trade_date desc
 -- delete from stock_data where trade_date='2025-07-02';
 
 
-delete from stock_data
+-- delete from stock_data
 where trade_date in
 (
 	with trade_count as (
@@ -20,5 +20,5 @@ where trade_date in
 );
 
 
-delete from stock_info;
-delete from stock_financials_history ;
+-- delete from stock_info;
+-- delete from stock_financials_history ;
