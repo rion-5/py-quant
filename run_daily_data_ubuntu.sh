@@ -10,4 +10,4 @@ mkdir -p log
 env > env.log
 
 # 실제 Python 스크립트 실행
-/home/rion5/miniconda3/envs/zena/bin/python -m data.save_daily_data >> log/cron_log_$(date +%Y-%m-%d).log 2>&1
+/home/rion5/miniconda3/envs/zena/bin/python -m data.save_daily_data >> /home/rion5/Zena/py-quant/log/cron_log_$(date +%Y-%m-%d).log 2>&1
