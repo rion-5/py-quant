@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # MacOS용: 홈 디렉토리 및 Python 경로 주의
 cd /Users/rion5/Zena/py-quant/ || exit

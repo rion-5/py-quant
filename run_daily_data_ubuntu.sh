@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Ubuntu용: 홈 디렉토리 경로만 변경
 cd /home/rion5/Zena/py-quant/ || exit
