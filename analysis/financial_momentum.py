@@ -3,13 +3,15 @@
 import pandas as pd
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
-from data.data_fetcher import get_momentum_indicators, get_value_indicators, fetch_stock_data_from_db
+from data.data_fetcher import get_momentum_indicators, get_value_indicators, fetch_stock_data_from_db,fetch_stock_data_from_yfinance
 from strategies.sortino_ratio import calculate_sortino_ratio
 import logging
 from datetime import datetime, timedelta
 import pytz
 import time
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from data.database import get_connection
+from psycopg2.extras import RealDictCursor
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

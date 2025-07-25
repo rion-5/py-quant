@@ -3,6 +3,7 @@
 import argparse
 import logging
 from datetime import datetime, timedelta
+import pandas as pd
 import pytz
 from data.data_fetcher import fetch_momentum_symbols_from_db, fetch_recent_trading_days_from_db
 from analysis.financial_momentum import fetch_stock_analysis
