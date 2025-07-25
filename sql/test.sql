@@ -44,3 +44,4 @@ HAVING COUNT(*) >= (
 ) / 15
 LIMIT 50;
 ;
+-- delete FROM stock_data_2024 WHERE trade_date >= '2025-01-01';

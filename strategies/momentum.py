@@ -1,64 +1,70 @@
-import yfinance as yf
+# strategies/momentum.py
+
 import pandas as pd
 from strategies.sortino_ratio import calculate_sortino_ratio
-from strategies.filters import apply_filters
-from data.data_fetcher import fetch_stock_data_from_db
-from datetime import datetime, timedelta, date
-import time
+from data.data_fetcher import fetch_stock_data_from_db, fetch_stock_data_from_yfinance
+from datetime import datetime, timedelta
+import logging
+import pytz
 
-# 데이터 가져오기
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 def get_stock_data(ticker, start_date, end_date):
-    stock = yf.Ticker(ticker)
-    data = stock.history(start=start_date, end=end_date)
-    new_date_str = (datetime.strptime(start_date, '%Y-%m-%d') - timedelta(days=3)).strftime('%Y-%m-%d')
-    # data = fetch_stock_data_from_db(ticker, new_date_str, end_date)
+    """DB 또는 yfinance에서 주식 데이터 조회"""
+    start_date = pd.to_datetime(start_date).strftime('%Y-%m-%d')
+    end_date = pd.to_datetime(end_date).strftime('%Y-%m-%d')
+    
+    data = fetch_stock_data_from_db(ticker, start_date, end_date)
+    if data.empty:
+        logger.warning(f"No DB data for {ticker}, fetching from yfinance")
+        data = fetch_stock_data_from_yfinance(ticker, start_date, end_date)
+        if not data:
+            return pd.DataFrame()
+    
     data['Daily Return'] = data['Close'].pct_change()
-
-    # start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
-    # data = data[data['Trade_date'] >= start_date_obj].dropna()
-    start_date_obj = pd.to_datetime(start_date).tz_localize('America/New_York')
-    data = data.loc[data.index >= start_date_obj].dropna()
-    # print(data)
+    data = data.loc[data.index >= pd.to_datetime(start_date)].dropna()
     return data
 
-# 종목 필터링 및 랭킹
 def filter_and_rank_stocks(tickers, start_date, end_date, min_volume, min_price, max_price, min_sortino, min_diff_ratio, top_n):
+    """종목 필터링 및 Sortino Ratio, Price Increase Ratio로 랭킹"""
     filtered_stocks = []
 
     for ticker in tickers:
         try:
             data = get_stock_data(ticker, start_date, end_date)
-            time.sleep(1.5)
-            #print(data)
-            # 필터 조건 적용
-            # if not apply_filters(data, min_volume, min_price, max_price, min_diff_ratio):
-            #     continue
+            if data.empty:
+                logger.warning(f"No data for {ticker}")
+                continue
+            
+            # 필터 조건
+            if (data['Volume'].mean() < min_volume or
+                data['Close'].iloc[-1] < min_price or
+                data['Close'].iloc[-1] > max_price):
+                continue
 
             # Sortino Ratio 계산
             sortino_ratio = calculate_sortino_ratio(data['Daily Return'])
-            
             if sortino_ratio < min_sortino:
                 continue
 
-            # 주가 상승율 계산
-            price_increase_ratio = float((data['Close'].iloc[-1] - data['Close'].iloc[0]) / data['Close'].iloc[0])
-            # print(f"{ticker} {sortino_ratio} {price_increase_ratio}")
+            # Price Increase Ratio 계산
+            price_increase_ratio = (data['Close'].iloc[-1] - data['Close'].iloc[0]) / data['Close'].iloc[0]
+            if price_increase_ratio < min_diff_ratio:
+                continue
+
             filtered_stocks.append({
                 "Ticker": ticker,
                 "Sortino Ratio": sortino_ratio,
                 "Price Increase Ratio": price_increase_ratio,
                 "Combined Score": sortino_ratio + price_increase_ratio,
-                # "Combined Score": sortino_ratio * 0.7 + price_increase_ratio * 0.3,
-                # "Combined Score": sortino_ratio * 0.3 + price_increase_ratio * 0.7,
-
                 "Price Range": f"{data['Close'].min():.2f} - {data['Close'].max():.2f}",
                 "Last Close": data['Close'].iloc[-1],
                 "Average Volume": data['Volume'].mean()
             })
 
         except Exception as e:
-            print(f"Error processing {ticker}: {e}")
+            logger.error(f"Error processing {ticker}: {e}")
 
-    # 정렬: Combined Score 기준 내림차순
     filtered_stocks.sort(key=lambda x: x['Combined Score'], reverse=True)
     return pd.DataFrame(filtered_stocks[:top_n])

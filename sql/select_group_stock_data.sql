@@ -7,7 +7,7 @@ order by trade_date desc
 -- delete from stock_data where trade_date='2025-07-02';
 
 
--- delete from stock_data
+/*delete from stock_data
 where trade_date in
 (
 	with trade_count as (
@@ -17,7 +17,7 @@ where trade_date in
 	)
 	select trade_date from trade_count
 	where count < 6600
-);
+);*/
 
 
 -- delete from stock_info;
