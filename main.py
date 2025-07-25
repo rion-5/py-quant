@@ -17,9 +17,17 @@ def save_to_quant_result(data, trade_date):
     """quant_result 테이블에 지표 데이터 저장"""
     query = """
         INSERT INTO quant_result (trade_date, ticker, six_month_change, rsi, revenue_growth, 
-                                 debt_to_equity, pbr, sortino_ratio, average_volume)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (trade_date, ticker) DO NOTHING;
+                                 debt_to_equity, pbr, sortino_ratio, average_volume, weighted_score)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (trade_date, ticker) DO UPDATE 
+        SET six_month_change = EXCLUDED.six_month_change,
+            rsi = EXCLUDED.rsi,
+            revenue_growth = EXCLUDED.revenue_growth,
+            debt_to_equity = EXCLUDED.debt_to_equity,
+            pbr = EXCLUDED.pbr,
+            sortino_ratio = EXCLUDED.sortino_ratio,
+            average_volume = EXCLUDED.average_volume,
+            weighted_score = EXCLUDED.weighted_score;
     """
     try:
         with get_connection() as conn:
@@ -34,8 +42,9 @@ def save_to_quant_result(data, trade_date):
                         row['Debt to Equity'],
                         row['PBR'],
                         row['Sortino Ratio'],
-                        row['Average Volume']
-                    ) for _, row in data.iterrows()
+                        row['Average Volume'],
+                        row['Weighted Score']
+                    ) for _, row in data.iterrows() if row['Ticker']
                 ]
                 execute_batch(cur, query, records)
                 conn.commit()
@@ -48,9 +57,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calculate and save momentum stock indicators to quant_result.")
     
     # 기본 파라미터
-    result = fetch_recent_trading_days_from_db()
-    default_start_date = result.get('start_date', (datetime.now(pytz.timezone('Asia/Seoul')) - timedelta(days=14)).strftime('%Y-%m-%d'))
+    result = fetch_recent_trading_days_from_db()  # 6개월 기간
     default_end_date = result.get('end_date', datetime.now(pytz.timezone('Asia/Seoul')).strftime('%Y-%m-%d'))
+    default_start_date = (pd.to_datetime(default_end_date) - timedelta(days=183)).strftime('%Y-%m-%d')
     default_min_volume = 10000000
     default_min_price = 50
     default_max_price = 1000
@@ -76,18 +85,19 @@ if __name__ == "__main__":
         args.start_date, args.end_date, args.min_volume, args.min_price, args.max_price, args.top_n
     )
     if not tickers:
-        logger.warning("No tickers found matching criteria")
+        logger.error("No tickers found matching criteria")
         exit(1)
 
     # 지표 계산
     logger.info(f"Calculating indicators for {len(tickers)} tickers")
-    fm_result = fetch_stock_analysis(tickers)
+    fm_result = fetch_stock_analysis(tickers, args.start_date, args.end_date, args.min_volume, 
+                                    args.min_price, args.max_price, args.min_sortino, args.min_diff_ratio)
     if fm_result.empty:
-        logger.warning("No analysis results obtained")
+        logger.error("No analysis results obtained")
         exit(1)
 
     # quant_result 테이블에 저장
     trade_date = datetime.now(pytz.timezone('Asia/Seoul')).strftime('%Y-%m-%d')
     save_to_quant_result(fm_result, trade_date)
     logger.info(f"Analysis completed and saved for {trade_date}")
-    print(fm_result)
+    print(fm_result.sort_values(by='Weighted Score', ascending=False))

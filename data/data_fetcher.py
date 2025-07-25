@@ -1,4 +1,5 @@
 # data/data_fetcher.py
+
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -8,6 +9,8 @@ from psycopg2.extras import RealDictCursor
 from data.database import get_connection
 from functools import lru_cache
 import logging
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+import time
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -65,7 +68,7 @@ def fetch_holidays_from_db(year):
         logger.error(f"Query Execution error: {e}")
         return []
 
-def fetch_recent_trading_days_from_db(days=14):
+def fetch_recent_trading_days_from_db(days=183):  # 6개월로 변경
     query = """
         SELECT MIN(trade_date) AS start_date,
                MAX(trade_date) AS end_date
@@ -88,7 +91,8 @@ def fetch_recent_trading_days_from_db(days=14):
         logger.error(f"Query Execution error: {e}")
         return {}
 
-@lru_cache(maxsize=100)
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), 
+       retry=retry_if_exception_type(Exception))
 def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
     if not isinstance(start_date, (str, datetime)) or not isinstance(end_date, (str, datetime)):
         raise ValueError("start_date and end_date must be strings or datetime objects")
@@ -99,6 +103,7 @@ def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
     
     try:
         data = yf.Ticker(ticker).history(start=start_date, end=end_date)
+        time.sleep(0.5)
         if data.empty:
             logger.info(f"No data available for {ticker} between {start_date} and {end_date}")
             return pd.DataFrame()
@@ -110,7 +115,7 @@ def fetch_stock_data_from_yfinance(ticker, start_date, end_date):
         return data
     except Exception as e:
         logger.error(f"Unexpected error for {ticker}: {e}")
-        return pd.DataFrame()
+        raise
 
 def fetch_symbols_from_db():
     query = """
@@ -165,11 +170,14 @@ def fetch_momentum_symbols_from_db(start_date, end_date, volume, min_price, max_
         logger.error(f"Query Execution error: {e}")
         return ()
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), 
+       retry=retry_if_exception_type(Exception))
 @lru_cache(maxsize=100)
 def fetch_stock_info_from_yfinance(ticker):
     try:
         stock = yf.Ticker(ticker)
         info = stock.info
+        time.sleep(0.5)
         if not info:
             logger.info(f"No info available for {ticker}")
             return {}
@@ -183,13 +191,16 @@ def fetch_stock_info_from_yfinance(ticker):
         }
     except Exception as e:
         logger.error(f"Unexpected error for {ticker}: {e}")
-        return {}
+        raise
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), 
+       retry=retry_if_exception_type(Exception))
 @lru_cache(maxsize=100)
 def fetch_stock_financials_from_yfinance(ticker):
     try:
         stock = yf.Ticker(ticker)
         stats = stock.info
+        time.sleep(0.5)
         if not stats:
             logger.info(f"No financials available for {ticker}")
             return {}
@@ -208,7 +219,7 @@ def fetch_stock_financials_from_yfinance(ticker):
         }
     except Exception as e:
         logger.error(f"Error fetching financials for {ticker}: {e}")
-        return {}
+        raise
 
 def compute_rsi(series, period=14):
     try:
@@ -227,11 +238,13 @@ def compute_rsi(series, period=14):
         logger.error(f"Error calculating RSI: {e}")
         return None
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), 
+       retry=retry_if_exception_type(Exception))
 @lru_cache(maxsize=100)
 def get_momentum_indicators(ticker):
     try:
         end_date = datetime.now(pytz.timezone('Asia/Seoul'))
-        start_date = end_date - timedelta(days=365)
+        start_date = end_date - timedelta(days=183)  # 6개월로 변경
         data = fetch_stock_data_from_db(ticker, start_date, end_date)
         if data.empty:
             data = fetch_stock_data_from_yfinance(ticker, start_date, end_date)
@@ -262,6 +275,8 @@ def get_momentum_indicators(ticker):
         logger.error(f"Error fetching momentum indicators for {ticker}: {e}")
         return {}
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10), 
+       retry=retry_if_exception_type(Exception))
 @lru_cache(maxsize=100)
 def get_value_indicators(ticker):
     try:
